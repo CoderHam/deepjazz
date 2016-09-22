@@ -3,7 +3,7 @@ Author:     Ji-Sung Kim
 Project:    deepjazz
 Purpose:    Generate jazz using a deep learning model (LSTM in deepjazz).
 
-Some code adapted from Evan Chow's jazzml, https://github.com/evancchow/jazzml 
+Some code adapted from Evan Chow's jazzml, https://github.com/evancchow/jazzml
 with express permission.
 
 Code was built while significantly referencing public examples from the
@@ -42,8 +42,8 @@ def __predict(model, x, indices_val, diversity):
 
     return next_val
 
-''' Helper function which uses the given model to generate a grammar sequence 
-    from a given corpus, indices_val (mapping), abstract_grammars (list), 
+''' Helper function which uses the given model to generate a grammar sequence
+    from a given corpus, indices_val (mapping), abstract_grammars (list),
     and diversity floating point value. '''
 def __generate_grammar(model, corpus, abstract_grammars, values, val_indices,
                        indices_val, max_len, max_tries, diversity):
@@ -64,11 +64,11 @@ def __generate_grammar(model, corpus, abstract_grammars, values, val_indices,
         # fix first note: must not have < > and not be a rest
         if (running_length < 0.00001):
             tries = 0
-            while (next_val.split(',')[0] == 'R' or 
+            while (next_val.split(',')[0] == 'R' or
                 len(next_val.split(',')) != 2):
                 # give up after 1000 tries; random from input's first notes
                 if tries >= max_tries:
-                    print('Gave up on first note generation after', max_tries, 
+                    print('Gave up on first note generation after', max_tries,
                         'tries')
                     # np.random is exclusive to high
                     rand = np.random.randint(0, len(abstract_grammars))
@@ -79,7 +79,7 @@ def __generate_grammar(model, corpus, abstract_grammars, values, val_indices,
                 tries += 1
 
         # shift sentence over with new value
-        sentence = sentence[1:] 
+        sentence = sentence[1:]
         sentence.append(next_val)
 
         # except for first case, add a ' ' separator
@@ -110,7 +110,7 @@ def generate(data_fn, out_fn, N_epochs):
     print('total # of values:', len(values))
 
     # build model
-    model = lstm.build_model(corpus=corpus, val_indices=val_indices, 
+    model = lstm.build_model(corpus=corpus, val_indices=val_indices,
                              max_len=max_len, N_epochs=N_epochs)
 
     # set up audio stream
@@ -126,10 +126,10 @@ def generate(data_fn, out_fn, N_epochs):
             curr_chords.insert((j.offset % 4), j)
 
         # generate grammar
-        curr_grammar = __generate_grammar(model=model, corpus=corpus, 
-                                          abstract_grammars=abstract_grammars, 
-                                          values=values, val_indices=val_indices, 
-                                          indices_val=indices_val, 
+        curr_grammar = __generate_grammar(model=model, corpus=corpus,
+                                          abstract_grammars=abstract_grammars,
+                                          values=values, val_indices=val_indices,
+                                          indices_val=indices_val,
                                           max_len=max_len, max_tries=max_tries,
                                           diversity=diversity)
 
@@ -180,7 +180,7 @@ def main(args):
         N_epochs = 128 # default
 
     # i/o settings
-    data_fn = 'midi/' + 'original_metheny.mid' # 'And Then I Knew' by Pat Metheny 
+    data_fn = 'midi/' + 'original_metheny.mid' # 'And Then I Knew' by Pat Metheny
     out_fn = 'midi/' 'deepjazz_on_metheny...' + str(N_epochs)
     if (N_epochs == 1): out_fn += '_epoch.midi'
     else:               out_fn += '_epochs.midi'
